@@ -1,7 +1,6 @@
 <%@ page import="com.example.t2303e_wcd.entity.Student" %>
 <%@ page import="com.example.t2303e_wcd.entity.StudentClass" %>
 <%@ page import="java.util.List" %>
-<%@ page import="java.util.Map" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -59,10 +58,9 @@
 </head>
 <body>
 <div class="container">
-    <h1>Class List</h1>
+    <h1><%=request.getParameter("name").toUpperCase()%></h1>
     <!-- Link to Add New Student -->
-    <a href="/T2303E_WCD_war/student" class="btn btn-primary">Student List</a>
-    <a href="/T2303E_WCD_war/class/create" class="btn btn-primary">Add New Class</a>
+    <a href="/T2303E_WCD_war/class/list" class="btn btn-primary">Back to class list</a>
 
     <!-- Table to display the student list with Bootstrap's table-striped and table-hover -->
     <table class="table table-striped table-hover table-info">
@@ -70,28 +68,33 @@
         <tr>
             <th>#</th>
             <th>Name</th>
-            <th>Number of Students</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>Telephone</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         <%
-            Map<Integer, Integer> studentCounts = (Map<Integer, Integer>)request.getAttribute("studentCounts");
-            List<StudentClass> classes = (List<StudentClass>)request.getAttribute("classes");
-            for(StudentClass s : classes) {
-                int studentCount = studentCounts.getOrDefault(s.getId(), 0);
+            // Assuming "students" is the list of student objects you have in your request attribute.
+            for(Student s : (List<Student>)request.getAttribute("studentSameClass")) {
         %>
         <tr>
             <td><%= s.getId() %></td>
             <td><%= s.getName() %></td>
-            <td><%= studentCount %></td>
+            <td><%= s.getEmail() %></td>
+            <td><%= s.getAddress() %></td>
+            <td><%= s.getTelephone() %></td>
             <td>
-                <form action="/T2303E_WCD_war/class/detail" method="get" style="display: inline;">
-                    <input type="hidden" name="class_id" value="<%= s.getId() %>">
+                <form action="/T2303E_WCD_war/student/update" method="get" style="display: inline;">
+                    <input type="hidden" name="id" value="<%= s.getId() %>">
                     <input type="hidden" name="name" value="<%= s.getName() %>">
-                    <button type="submit" class="btn btn-info btn-sm">Danh sinh viên lớp <%=s.getName()%></button>
+                    <input type="hidden" name="email" value="<%= s.getEmail() %>">
+                    <input type="hidden" name="address" value="<%= s.getAddress() %>">
+                    <input type="hidden" name="telephone" value="<%= s.getTelephone() %>">
+                    <button type="submit" class="btn btn-warning btn-sm">Update</button>
                 </form>
-                <form action="/T2303E_WCD_war/class/delete" method="post" style="display: inline;">
+                <form action="/T2303E_WCD_war/student/delete" method="post" style="display: inline;">
                     <input type="hidden" name="id" value="<%= s.getId() %>">
                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this student?');">
                         Delete

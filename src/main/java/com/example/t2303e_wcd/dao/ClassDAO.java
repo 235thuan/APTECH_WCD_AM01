@@ -4,16 +4,32 @@ import com.example.t2303e_wcd.database.Database;
 import com.example.t2303e_wcd.entity.Student;
 import com.example.t2303e_wcd.entity.StudentClass;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ClassDAO implements DAOInterface<StudentClass>{
+public class ClassDAO implements DAOInterface<StudentClass> {
     @Override
     public List<StudentClass> all() {
-        return List.of();
+        String sql = "SELECT * FROM classes ORDER BY id";
+        List<StudentClass> studentClasses = new ArrayList<>();
+        try (
+                Connection conn = Database.createInstance().getStatement().getConnection(); // Get a new connection directly
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)
+        ) {
+            while (rs.next()) {
+                // Create a Student object
+                studentClasses.add(new StudentClass(
+                        rs.getInt("id"),
+                        rs.getString("name")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Use proper logging
+        }
+        return studentClasses;
+
     }
 
     @Override
@@ -57,7 +73,19 @@ public class ClassDAO implements DAOInterface<StudentClass>{
 
     @Override
     public boolean delete(StudentClass studentClass) {
-        return false;
+        String sql = "DELETE FROM classes WHERE id = ?";
+        try (
+                Connection conn = Database.createInstance().getStatement().getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, studentClass.getId()); // Ensure we're deleting the student with the provided ID
+
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;  // Return true if exactly one student is deleted
+        } catch (SQLException e) {
+            System.out.println("lỗi truy vấn xóa : "+e.getMessage());
+            return false;  // Return false in case of error
+        }
     }
 
     @Override

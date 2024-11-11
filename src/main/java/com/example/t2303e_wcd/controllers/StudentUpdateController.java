@@ -75,7 +75,6 @@ public class StudentUpdateController extends HttpServlet {
 
         // Create a new Student object with the form data and optional `StudentClass`
         Student student = new Student(id,name, email, address, telephone, studentClass);
-        System.out.println("student class id : "+student.getStudentClass().getId());
 
         // Sử dụng StudentDAO để cập nhật sinh viên vào cơ sở dữ liệu
         StudentDAO sd = new StudentDAO();

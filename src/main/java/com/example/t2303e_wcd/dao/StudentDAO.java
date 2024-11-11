@@ -11,7 +11,7 @@ import java.util.List;
 public class StudentDAO implements DAOInterface<Student> {
     @Override
     public List<Student> all() {
-        String sql = "SELECT * FROM students";
+        String sql = "SELECT * FROM students ORDER BY id";
         List<Student> list = new ArrayList<>();
         try (
                 Connection conn = Database.createInstance().getStatement().getConnection(); // Get a new connection directly
@@ -49,6 +49,52 @@ public class StudentDAO implements DAOInterface<Student> {
         }
         return list;
     }
+
+    public List<Student> allSameClass(int classId) {
+        String sql = "SELECT * FROM students WHERE class_id = ? ORDER BY id";
+        List<Student> list = new ArrayList<>();
+        try (
+                Connection conn = Database.createInstance().getStatement().getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+        ) {
+            pstmt.setInt(1, classId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new Student(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getString("email"),
+                            rs.getString("address"),
+                            rs.getString("telephone"),
+                            classId
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi thực hiện câu lệnh SQL: " + e.getMessage());
+        }
+        return list;
+    }
+
+    public int countStudentsInClass(int classId) {
+        String sql = "SELECT COUNT(*) FROM students WHERE class_id = ?";
+        int count = 0;
+        try (
+                Connection conn = Database.createInstance().getStatement().getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+        ) {
+            pstmt.setInt(1, classId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    count = rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi thực hiện câu lệnh SQL: " + e.getMessage());
+        }
+        return count;
+    }
+
 
 
     public boolean create(Student student) {
@@ -93,7 +139,6 @@ public class StudentDAO implements DAOInterface<Student> {
             return false;
         }
     }
-
 
     @Override
     public boolean update(Student student) {

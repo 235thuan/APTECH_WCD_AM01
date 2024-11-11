@@ -61,8 +61,9 @@
     <h1>Student List</h1>
     <!-- Link to Add New Student -->
     <a href="student/create" class="btn btn-primary">Add New Student</a>
-    <a href="class/create" class="btn btn-primary">Add New Class</a>
-    <a href="subject/create" class="btn btn-primary">Add New Subject</a>
+    <a href="/T2303E_WCD_war/class/list" class="btn btn-primary">Class List</a>
+    <a href="/T2303E_WCD_war/subject/create" class="btn btn-primary">Add New Subject</a>
+    <a href="/T2303E_WCD_war/studentSubject/create" class="btn btn-primary">Add Student Subject</a>
 
     <!-- Table to display the student list with Bootstrap's table-striped and table-hover -->
     <table class="table table-striped table-hover table-info">
